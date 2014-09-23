@@ -1,0 +1,12 @@
+---
+layout: post
+title: "eclipse运行的java设置代理"
+date: 2014-06-12 20:20:21 +0800
+comments: true
+categories: eclipse proxy
+---
+    
+在vm参数中增加如下设置
+```
+-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=8888
+```

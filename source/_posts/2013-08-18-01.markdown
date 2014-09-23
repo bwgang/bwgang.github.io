@@ -1,0 +1,19 @@
+---
+layout: post
+title: "js返回上一页 并延迟几秒"
+date: 2013-08-18 20:20:21 +0800
+comments: true
+categories: js
+---
+    
+js返回上一页 并延迟几秒
+
+结合Jquery的setTimeout函数使用
+```	
+<label>{$err_msg}  --3秒后返回重新填写</label>
+ <script>
+    setTimeout(function () { 
+         javascript:history.go(-1);
+    }, 3000);
+</script>
+```

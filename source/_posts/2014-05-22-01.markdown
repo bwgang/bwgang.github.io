@@ -1,0 +1,89 @@
+---
+layout: post
+title: "转：将System.out输出到文件和控制台的简单方法"
+date: 2014-05-22 20:20:21 +0800
+comments: true
+categories: java
+---
+    
+转自：http://www.carygao.info/archives/92
+原文：A quick and easy way to direct Java System.out to File and to Console
+
+如果你想将System.out和System.err的结果输出到文件和控制台中，请直接看下面代码示例。
+使用Google去搜索“Java stdout 输出到文件和控制台中”，这个问题答案简单到爆，但悲剧的是前几页几乎没答案。于是俺决定写一个简单的方法，希望码农们未来不要总花那么长时间来处理这些麻烦。
+
+那么如何不用极度荒唐的方法来实现将System.out或System.err同时输出到文件和控制台中呢？简单来说，只需要写一个继承自OutputStream的实现类然后用它构造一个PrintStream实例，最后调用System把PrintStream放进去。
+
+```
+public class MultiOutputStream extends OutputStream
+{
+    OutputStream[] outputStreams;
+  
+    public MultiOutputStream(OutputStream... outputStreams)
+    {
+        this.outputStreams= outputStreams;
+    }
+  
+    @Override
+    public void write(int b) throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.write(b);
+    }
+  
+    @Override
+    public void write(byte[] b) throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.write(b);
+    }
+  
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.write(b, off, len);
+    }
+  
+    @Override
+    public void flush() throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.flush();
+    }
+  
+    @Override
+    public void close() throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.close();
+    }
+}
+```
+下一步构造一个PrintStream实例放在System中：
+```
+try
+{
+    FileOutputStream fout= new FileOutputStream("stdout.log");
+    FileOutputStream ferr= new FileOutputStream("stderr.log");
+  
+    MultiOutputStream multiOut= new MultiOutputStream(System.out, fout);
+    MultiOutputStream multiErr= new MultiOutputStream(System.err, ferr);
+  
+    PrintStream stdout= new PrintStream(multiOut);
+    PrintStream stderr= new PrintStream(multiErr);
+  
+    System.setOut(stdout);
+    System.setErr(stderr);
+}
+catch (FileNotFoundException ex)
+{
+    //Could not create/open the file
+}
+```
+
+现在你在任意地方使用System.out或System.err，最后去文件和控制台中查看输出结果。
+```
+System.out.println("Holy Rusty Metal Batman! I can't believe this was so simple!");
+System.err.println("God I hate you Robin.");
+```

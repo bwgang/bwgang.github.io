@@ -1,0 +1,30 @@
+---
+layout: post
+title: "html-控件的隐藏"
+date: 2013-08-17 20:20:21 +0800
+comments: true
+categories: js
+---
+    
+### html-控件的隐藏
+
+html属性设置 input的两种方式 type="hidden" style="display: none;"
+```	
+<input type="hidden" value="" name="Ie_txt" id="Ie_txt">  
+<input type="text" style="display: none;" value="275" name="task_id" class="span3">
+```
+### 通过js脚本设置
+```	
+<input type="button" value="隐藏" onclick="csan(did,'none')">
+<input type="button" value="显示" onclick="csan(did,'')">
+<input id="did">
+<br>
+<input type="button" value="隐藏" onclick="csan(dis,'none')">
+<input type="button" value="显示" onclick="csan(dis,'')">
+<input id="dis">
+<script>
+function csan(obj,sta){
+eval("obj.style.display=\""+sta+"\"");
+}
+</script>
+```

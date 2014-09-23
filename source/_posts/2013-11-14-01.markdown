@@ -1,0 +1,15 @@
+---
+layout: post
+title: "已知IP查看计算机名和mac地址"
+date: 2013-11-14 20:20:21 +0800
+comments: true
+categories: windows
+---
+    
+- 知道对方ip查看对方的计算机名
+
+    方法：开始->运行->cmd->net view 对方ip或者 开始->运行->cmd->nbtstat -a 对方ip
+
+- 知道对方计算机名查看对方ip
+
+    方法：开始->运行->cmd->ping 对方计算机名或者 开始->运行->cmd->nbtstat -a 对方计算机名

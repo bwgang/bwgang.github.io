@@ -1,0 +1,19 @@
+---
+layout: post
+title: "安卓Android模拟器中如何写入hosts文件"
+date: 2013-10-18 20:20:21 +0800
+comments: true
+categories: Android adb
+---
+    
+安卓app测试中，需要修改host信息，指向测试环境，
+真机有限，有时需要用到安卓模拟器，默认安装的模拟器是没有root的，在系统中无法直接修改，
+如果root后再修改，操作步骤繁琐了些，可以不root，直接通过命令修改，如下：
+```    
+#设置目录权限
+    adb shell chmod 4777 /system
+#写入hosts文件
+    echo "1.1.1.1 site.name.com" > etc/hosts
+#查看写入结果
+    cat etc/hosts
+```
