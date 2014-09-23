@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Cookies | Bwgang的自用博客]]></title>
+  <link href="http://www.baiweigang.cn/blog/categories/cookies/atom.xml" rel="self"/>
+  <link href="http://www.baiweigang.cn/"/>
+  <updated>2014-09-23T22:16:30+08:00</updated>
+  <id>http://www.baiweigang.cn/</id>
+  <author>
+    <name><![CDATA[bwgang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[转:HttpClient Cookies]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/05/13/01/"/>
+    <updated>2014-05-13T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/05/13/01</id>
+    <content type="html"><![CDATA[<p>转自：<a href="http://blog.csdn.net/mgoann/article/details/4057064">http://blog.csdn.net/mgoann/article/details/4057064</a></p>
+
+<h3>HttpClient Cookies</h3>
+
+<h2>简介</h2>
+
+<p>HttpClient支持自动管理Cookies，允许服务端设定Cookies，并在请求时自动返回客户端的Cookies信息。客户端也可以手动的设置Cookies发送到服务端。</p>
+
+<p>不幸的是，同一时间内有太多的Cookies标准： Netscape Cookie, RFC2109, RFC2965 以及大量供应商不符合规范的自定义Cookies标准。针对此，HttpClient提供Cookies管理策略驱动。这片文章意在阐述怎么样去使用不同标准的Cookies以及如何解决在使用Cookies和HttpClient时一些共同的问题。</p>
+
+<h2>支持的规格</h2>
+
+<p>以下Cookies标准，HttpClient3.1可以支持。</p>
+
+<h3>RFC2109</h3>
+
+<p>RFC2109是W3C组织第一次推出的官方Cookies标准。理论上，所有使用版本1Cookies的服务端都应该使用此标准。HttpClient已经将此标准设定为默认。
+遗憾的是，许多服务端不正确的实现了标准或者仍然使用Netscape标准。所有有时感到此标准太多于严格。
+RFC2109是HttpClient使用的默认Cookies协议。</p>
+
+<h3>RFC2965</h3>
+
+<p>RFC2965定义了版本2并且尝试去弥补在版本1中Cookie的RFC2109标准的缺点。RFC2965是，并规定RFC2965最终取代RFC2109.</p>
+
+<p>发送RFC2965标准Cookies的服务端，将会使用Set-Cookie2 header添加到Set-Cookie Header信心中，RFC2965 Cookies是区分端口的。</p>
+
+<h3>Netscape标准</h3>
+
+<p>Netscape是最原始的Cookies规范，同时也是RFC2109的基础。尽管如此，还是在很多重要的方面与RFC2109不同，可能需要特定服务器才可以兼容。</p>
+
+<h3>Browser Compatibility</h3>
+
+<p>这种兼容性设计要求是适应尽可能多的不同的服务器，尽管不是完全按照标准来实现的。如果你遇到了解析Cookies的问题，你就可能要用到这一个规范。</p>
+
+<p>有太多的web站点是用CGI脚本去实现的，而导致只有将所有的Cookies都放入Request header才可以正常的工作。这种情况下最好设置http.protocol.single-cookie-header参数为true。</p>
+
+<h3>Ignore Cookies</h3>
+
+<p>此规格忽略所有Cookie 。被用来防止HttpClient接受和发送的Cookie。</p>
+
+<h3>Spacifying the Specification</h3>
+
+<p>有两种方式去规定使用哪种Cookies规范，每个HttpMethod实例都有HttpMethodParams，他的policy值必须使用方法CookiePolicy.registerCookieSpec()来注册。
+<code>
+HttpMethod method = new GetMethod();
+Method.getParams().setCookiePolicy(CookiePolicy.RFC_2109);
+</code></p>
+
+<h3>手动处理Cookies</h3>
+
+<p>HttpClient的Cookie管理API可以手动处理Cookie。可以手动设置Requset的Cookie headers或是处理Response的Set-Cookie的headers或是用自动Cookie管理去代替。
+<code>
+HttpMethod method = new GetMethod();
+Method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+Method.setRequestHeader(“Cookie”, “special_cookie=value”);
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

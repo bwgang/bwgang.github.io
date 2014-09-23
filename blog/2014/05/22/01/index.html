@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>转：将System.out输出到文件和控制台的简单方法 - Bwgang的自用博客</title>
+  <meta name="author" content="bwgang">
+
+  
+  <meta name="description" content="转自：http://www.carygao.info/archives/92
+原文：A quick and easy way to direct Java System.out to File and to Console 如果你想将System.out和System. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.baiweigang.cn/blog/2014/05/22/01">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Bwgang的自用博客" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="/stylesheets/google-fonts.css"rel="stylesheet"type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Bwgang的自用博客</a></h1>
+  
+    <h2>日积月累~！ 积少成多~~</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.baiweigang.cn" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">归档</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">转：将System.out输出到文件和控制台的简单方法</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-22T20:20:21+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2014</span></span> <span class='time'>8:20 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>转自：<a href="http://www.carygao.info/archives/92">http://www.carygao.info/archives/92</a>
+原文：A quick and easy way to direct Java System.out to File and to Console</p>
+
+<p>如果你想将System.out和System.err的结果输出到文件和控制台中，请直接看下面代码示例。
+使用Google去搜索“Java stdout 输出到文件和控制台中”，这个问题答案简单到爆，但悲剧的是前几页几乎没答案。于是俺决定写一个简单的方法，希望码农们未来不要总花那么长时间来处理这些麻烦。</p>
+
+<p>那么如何不用极度荒唐的方法来实现将System.out或System.err同时输出到文件和控制台中呢？简单来说，只需要写一个继承自OutputStream的实现类然后用它构造一个PrintStream实例，最后调用System把PrintStream放进去。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public class MultiOutputStream extends OutputStream
+</span><span class='line'>{
+</span><span class='line'>    OutputStream[] outputStreams;
+</span><span class='line'>  
+</span><span class='line'>    public MultiOutputStream(OutputStream... outputStreams)
+</span><span class='line'>    {
+</span><span class='line'>        this.outputStreams= outputStreams;
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void write(int b) throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.write(b);
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void write(byte[] b) throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.write(b);
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void write(byte[] b, int off, int len) throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.write(b, off, len);
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void flush() throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.flush();
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void close() throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.close();
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下一步构造一个PrintStream实例放在System中：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>try
+</span><span class='line'>{
+</span><span class='line'>    FileOutputStream fout= new FileOutputStream("stdout.log");
+</span><span class='line'>    FileOutputStream ferr= new FileOutputStream("stderr.log");
+</span><span class='line'>  
+</span><span class='line'>    MultiOutputStream multiOut= new MultiOutputStream(System.out, fout);
+</span><span class='line'>    MultiOutputStream multiErr= new MultiOutputStream(System.err, ferr);
+</span><span class='line'>  
+</span><span class='line'>    PrintStream stdout= new PrintStream(multiOut);
+</span><span class='line'>    PrintStream stderr= new PrintStream(multiErr);
+</span><span class='line'>  
+</span><span class='line'>    System.setOut(stdout);
+</span><span class='line'>    System.setErr(stderr);
+</span><span class='line'>}
+</span><span class='line'>catch (FileNotFoundException ex)
+</span><span class='line'>{
+</span><span class='line'>    //Could not create/open the file
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在你在任意地方使用System.out或System.err，最后去文件和控制台中查看输出结果。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>System.out.println("Holy Rusty Metal Batman! I can't believe this was so simple!");
+</span><span class='line'>System.err.println("God I hate you Robin.");</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">bwgang</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2014-05-22T20:20:21+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2014</span></span> <span class='time'>8:20 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/java/'>java</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/05/13/01/" title="Previous Post: 转:HttpClient Cookies">&laquo; 转:HttpClient Cookies</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/06/12/01/" title="Next Post: eclipse运行的java设置代理">eclipse运行的java设置代理 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/06/26/01/">转：Java：判断文件的编码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/23/01/">转：windows7下彻底卸载/删除微软拼音输入法2007</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/12/01/">Eclipse运行的java设置代理</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/22/01/">转：将System.out输出到文件和控制台的简单方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/13/01/">转:HttpClient Cookies</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2009~~2014 -  - <a href="http://weibo.com/bwgang">bwgang</a>
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

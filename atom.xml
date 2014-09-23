@@ -4,7 +4,7 @@
   <title><![CDATA[Bwgang的自用博客]]></title>
   <link href="http://www.baiweigang.cn/atom.xml" rel="self"/>
   <link href="http://www.baiweigang.cn/"/>
-  <updated>2014-09-23T20:48:03+08:00</updated>
+  <updated>2014-09-23T22:16:30+08:00</updated>
   <id>http://www.baiweigang.cn/</id>
   <author>
     <name><![CDATA[bwgang]]></name>
@@ -14,11 +14,518 @@
 
   
   <entry>
-    <title type="html"><![CDATA[演示文档]]></title>
-    <link href="http://www.baiweigang.cn/blog/2014/09/23/this-is-a-demo/"/>
-    <updated>2014-09-23T20:47:20+08:00</updated>
-    <id>http://www.baiweigang.cn/blog/2014/09/23/this-is-a-demo</id>
-    <content type="html"><![CDATA[<p>演示文档</p>
+    <title type="html"><![CDATA[转：Java：判断文件的编码]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/06/26/01/"/>
+    <updated>2014-06-26T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/06/26/01</id>
+    <content type="html"><![CDATA[<p>转自：<a href="http://www.cppblog.com/biao/archive/2009/11/04/100130.aspx">http://www.cppblog.com/biao/archive/2009/11/04/100130.aspx</a>  <br/>
+首先，不同编码的文本，是根据文本的前两个字节来定义其编码格式的。定义如下：</p>
+
+<ul>
+<li>ANSI：　　　　　　　　无格式定义；</li>
+<li>Unicode： 　　　　　　前两个字节为FFFE；</li>
+<li>Unicode big endian：　前两字节为FEFF；　</li>
+<li>UTF-8：　 　　　　　　前两字节为EFBB；</li>
+</ul>
+
+
+<p>知道了各种编码格式的区别，写代码就容易了</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public static String get_charset( File file ) {  
+</span><span class='line'>        String charset = "GBK";  
+</span><span class='line'>        byte[] first3Bytes = new byte[3];  
+</span><span class='line'>        try {  
+</span><span class='line'>            boolean;  
+</span><span class='line'>            BufferedInputStream bis = new BufferedInputStream( new FileInputStream( file ) );  
+</span><span class='line'>            bis.mark( 0 );  
+</span><span class='line'>            int read = bis.read( first3Bytes, 0, 3 );  
+</span><span class='line'>            if ( read == -1 ) return charset;  
+</span><span class='line'>            if ( first3Bytes[0] == (byte) 0xFF && first3Bytes[1] == (byte) 0xFE ) {  
+</span><span class='line'>                charset = "UTF-16LE";  
+</span><span class='line'>                checked = true;  
+</span><span class='line'>            }  
+</span><span class='line'>            else if ( first3Bytes[0] == (byte) 0xFE && first3Bytes[1] == (byte) 0xFF ) {  
+</span><span class='line'>                charset = "UTF-16BE";  
+</span><span class='line'>                checked = true;  
+</span><span class='line'>            }  
+</span><span class='line'>            else if ( first3Bytes[0] == (byte) 0xEF && first3Bytes[1] == (byte) 0xBB && first3Bytes[2] == (byte) 0xBF ) {  
+</span><span class='line'>                charset = "UTF-8";  
+</span><span class='line'>                checked = true;  
+</span><span class='line'>            }  
+</span><span class='line'>            bis.reset();  
+</span><span class='line'>            if ( !checked ) {  
+</span><span class='line'>            //    int len = 0;  
+</span><span class='line'>                int loc = 0;  
+</span><span class='line'>   
+</span><span class='line'>                while ( (read = bis.read()) != -1 ) {  
+</span><span class='line'>                    loc++;  
+</span><span class='line'>                    if ( read &gt;= 0xF0 ) break;  
+</span><span class='line'>                    if ( 0x80 &lt;= read && read &lt;= 0xBF ) // 单独出现BF以下的，也算是GBK  
+</span><span class='line'>                    break;  
+</span><span class='line'>                    if ( 0xC0 &lt;= read && read &lt;= 0xDF ) {  
+</span><span class='line'>                        read = bis.read();  
+</span><span class='line'>                        if ( 0x80 &lt;= read && read &lt;= 0xBF ) // 双字节 (0xC0 - 0xDF) (0x80  
+</span><span class='line'>                                                                        // - 0xBF),也可能在GB编码内  
+</span><span class='line'>                        continue;  
+</span><span class='line'>                        else break;  
+</span><span class='line'>                    }  
+</span><span class='line'>                    else if ( 0xE0 &lt;= read && read &lt;= 0xEF ) {// 也有可能出错，但是几率较小  
+</span><span class='line'>                        read = bis.read();  
+</span><span class='line'>                        if ( 0x80 &lt;= read && read &lt;= 0xBF ) {  
+</span><span class='line'>                            read = bis.read();  
+</span><span class='line'>                            if ( 0x80 &lt;= read && read &lt;= 0xBF ) {  
+</span><span class='line'>                                charset = "UTF-8";  
+</span><span class='line'>                                break;  
+</span><span class='line'>                            }  
+</span><span class='line'>                            else break;  
+</span><span class='line'>                        }  
+</span><span class='line'>                        else break;  
+</span><span class='line'>                    }  
+</span><span class='line'>                }  
+</span><span class='line'>                //System.out.println( loc + " " + Integer.toHexString( read ) );  
+</span><span class='line'>            }  
+</span><span class='line'>   
+</span><span class='line'>            bis.close();  
+</span><span class='line'>        } catch ( Exception e ) {  
+</span><span class='line'>            e.printStackTrace();  
+</span><span class='line'>        }  
+</span><span class='line'>   
+</span><span class='line'>        return charset;  
+</span><span class='line'>    }   </span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[转：windows7下彻底卸载/删除微软拼音输入法2007]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/06/23/01/"/>
+    <updated>2014-06-23T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/06/23/01</id>
+    <content type="html"><![CDATA[<p>转自：<a href="http://chensu686.blog.163.com/blog/static/4995003520101029115652429/">http://chensu686.blog.163.com/blog/static/4995003520101029115652429/</a></p>
+
+<h3>windows7下任务栏的语言设置里没有“拼音输入法2007”的选项。</h3>
+
+<p>所以，先用如下命令：</p>
+
+<p>在 开始 〉运行 中输入(或复制)</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>MsiExec.exe /X{90120000-0028-0804-0000-0000000FF1CE}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>卸载后</p>
+
+<p>语言里出现“拼音输入法2007”的选项，删除即可。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Eclipse运行的java设置代理]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/06/12/01/"/>
+    <updated>2014-06-12T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/06/12/01</id>
+    <content type="html"><![CDATA[<p>在vm参数中增加如下设置</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=8888</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[转：将System.out输出到文件和控制台的简单方法]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/05/22/01/"/>
+    <updated>2014-05-22T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/05/22/01</id>
+    <content type="html"><![CDATA[<p>转自：<a href="http://www.carygao.info/archives/92">http://www.carygao.info/archives/92</a>
+原文：A quick and easy way to direct Java System.out to File and to Console</p>
+
+<p>如果你想将System.out和System.err的结果输出到文件和控制台中，请直接看下面代码示例。
+使用Google去搜索“Java stdout 输出到文件和控制台中”，这个问题答案简单到爆，但悲剧的是前几页几乎没答案。于是俺决定写一个简单的方法，希望码农们未来不要总花那么长时间来处理这些麻烦。</p>
+
+<p>那么如何不用极度荒唐的方法来实现将System.out或System.err同时输出到文件和控制台中呢？简单来说，只需要写一个继承自OutputStream的实现类然后用它构造一个PrintStream实例，最后调用System把PrintStream放进去。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public class MultiOutputStream extends OutputStream
+</span><span class='line'>{
+</span><span class='line'>    OutputStream[] outputStreams;
+</span><span class='line'>  
+</span><span class='line'>    public MultiOutputStream(OutputStream... outputStreams)
+</span><span class='line'>    {
+</span><span class='line'>        this.outputStreams= outputStreams;
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void write(int b) throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.write(b);
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void write(byte[] b) throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.write(b);
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void write(byte[] b, int off, int len) throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.write(b, off, len);
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void flush() throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.flush();
+</span><span class='line'>    }
+</span><span class='line'>  
+</span><span class='line'>    @Override
+</span><span class='line'>    public void close() throws IOException
+</span><span class='line'>    {
+</span><span class='line'>        for (OutputStream out: outputStreams)
+</span><span class='line'>            out.close();
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下一步构造一个PrintStream实例放在System中：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>try
+</span><span class='line'>{
+</span><span class='line'>    FileOutputStream fout= new FileOutputStream("stdout.log");
+</span><span class='line'>    FileOutputStream ferr= new FileOutputStream("stderr.log");
+</span><span class='line'>  
+</span><span class='line'>    MultiOutputStream multiOut= new MultiOutputStream(System.out, fout);
+</span><span class='line'>    MultiOutputStream multiErr= new MultiOutputStream(System.err, ferr);
+</span><span class='line'>  
+</span><span class='line'>    PrintStream stdout= new PrintStream(multiOut);
+</span><span class='line'>    PrintStream stderr= new PrintStream(multiErr);
+</span><span class='line'>  
+</span><span class='line'>    System.setOut(stdout);
+</span><span class='line'>    System.setErr(stderr);
+</span><span class='line'>}
+</span><span class='line'>catch (FileNotFoundException ex)
+</span><span class='line'>{
+</span><span class='line'>    //Could not create/open the file
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在你在任意地方使用System.out或System.err，最后去文件和控制台中查看输出结果。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>System.out.println("Holy Rusty Metal Batman! I can't believe this was so simple!");
+</span><span class='line'>System.err.println("God I hate you Robin.");</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[转:HttpClient Cookies]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/05/13/01/"/>
+    <updated>2014-05-13T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/05/13/01</id>
+    <content type="html"><![CDATA[<p>转自：<a href="http://blog.csdn.net/mgoann/article/details/4057064">http://blog.csdn.net/mgoann/article/details/4057064</a></p>
+
+<h3>HttpClient Cookies</h3>
+
+<h2>简介</h2>
+
+<p>HttpClient支持自动管理Cookies，允许服务端设定Cookies，并在请求时自动返回客户端的Cookies信息。客户端也可以手动的设置Cookies发送到服务端。</p>
+
+<p>不幸的是，同一时间内有太多的Cookies标准： Netscape Cookie, RFC2109, RFC2965 以及大量供应商不符合规范的自定义Cookies标准。针对此，HttpClient提供Cookies管理策略驱动。这片文章意在阐述怎么样去使用不同标准的Cookies以及如何解决在使用Cookies和HttpClient时一些共同的问题。</p>
+
+<h2>支持的规格</h2>
+
+<p>以下Cookies标准，HttpClient3.1可以支持。</p>
+
+<h3>RFC2109</h3>
+
+<p>RFC2109是W3C组织第一次推出的官方Cookies标准。理论上，所有使用版本1Cookies的服务端都应该使用此标准。HttpClient已经将此标准设定为默认。
+遗憾的是，许多服务端不正确的实现了标准或者仍然使用Netscape标准。所有有时感到此标准太多于严格。
+RFC2109是HttpClient使用的默认Cookies协议。</p>
+
+<h3>RFC2965</h3>
+
+<p>RFC2965定义了版本2并且尝试去弥补在版本1中Cookie的RFC2109标准的缺点。RFC2965是，并规定RFC2965最终取代RFC2109.</p>
+
+<p>发送RFC2965标准Cookies的服务端，将会使用Set-Cookie2 header添加到Set-Cookie Header信心中，RFC2965 Cookies是区分端口的。</p>
+
+<h3>Netscape标准</h3>
+
+<p>Netscape是最原始的Cookies规范，同时也是RFC2109的基础。尽管如此，还是在很多重要的方面与RFC2109不同，可能需要特定服务器才可以兼容。</p>
+
+<h3>Browser Compatibility</h3>
+
+<p>这种兼容性设计要求是适应尽可能多的不同的服务器，尽管不是完全按照标准来实现的。如果你遇到了解析Cookies的问题，你就可能要用到这一个规范。</p>
+
+<p>有太多的web站点是用CGI脚本去实现的，而导致只有将所有的Cookies都放入Request header才可以正常的工作。这种情况下最好设置http.protocol.single-cookie-header参数为true。</p>
+
+<h3>Ignore Cookies</h3>
+
+<p>此规格忽略所有Cookie 。被用来防止HttpClient接受和发送的Cookie。</p>
+
+<h3>Spacifying the Specification</h3>
+
+<p>有两种方式去规定使用哪种Cookies规范，每个HttpMethod实例都有HttpMethodParams，他的policy值必须使用方法CookiePolicy.registerCookieSpec()来注册。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>HttpMethod method = new GetMethod();
+</span><span class='line'>Method.getParams().setCookiePolicy(CookiePolicy.RFC_2109);</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>手动处理Cookies</h3>
+
+<p>HttpClient的Cookie管理API可以手动处理Cookie。可以手动设置Requset的Cookie headers或是处理Response的Set-Cookie的headers或是用自动Cookie管理去代替。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>HttpMethod method = new GetMethod();
+</span><span class='line'>Method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+</span><span class='line'>Method.setRequestHeader(“Cookie”, “special_cookie=value”);</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[已知IP查看计算机名和mac地址]]></title>
+    <link href="http://www.baiweigang.cn/blog/2013/11/14/01/"/>
+    <updated>2013-11-14T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2013/11/14/01</id>
+    <content type="html"><![CDATA[<ul>
+<li><p>知道对方ip查看对方的计算机名</p>
+
+<p>  方法：开始->运行->cmd->net view 对方ip或者 开始->运行->cmd->nbtstat -a 对方ip</p></li>
+<li><p>知道对方计算机名查看对方ip</p>
+
+<p>  方法：开始->运行->cmd->ping 对方计算机名或者 开始->运行->cmd->nbtstat -a 对方计算机名</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[安卓Android模拟器中如何写入hosts文件]]></title>
+    <link href="http://www.baiweigang.cn/blog/2013/10/18/01/"/>
+    <updated>2013-10-18T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2013/10/18/01</id>
+    <content type="html"><![CDATA[<p>安卓app测试中，需要修改host信息，指向测试环境，
+真机有限，有时需要用到安卓模拟器，默认安装的模拟器是没有root的，在系统中无法直接修改，
+如果root后再修改，操作步骤繁琐了些，可以不root，直接通过命令修改，如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#设置目录权限
+</span><span class='line'>    adb shell chmod 4777 /system
+</span><span class='line'>#写入hosts文件
+</span><span class='line'>    echo "1.1.1.1 site.name.com" &gt; etc/hosts
+</span><span class='line'>#查看写入结果
+</span><span class='line'>    cat etc/hosts</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Js返回上一页 并延迟几秒]]></title>
+    <link href="http://www.baiweigang.cn/blog/2013/08/18/01/"/>
+    <updated>2013-08-18T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2013/08/18/01</id>
+    <content type="html"><![CDATA[<p>js返回上一页 并延迟几秒</p>
+
+<p>结合Jquery的setTimeout函数使用</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;label&gt;{$err_msg}  --3秒后返回重新填写&lt;/label&gt;
+</span><span class='line'> &lt;script&gt;
+</span><span class='line'>    setTimeout(function () { 
+</span><span class='line'>         javascript:history.go(-1);
+</span><span class='line'>    }, 3000);
+</span><span class='line'>&lt;/script&gt;</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Html-控件的隐藏]]></title>
+    <link href="http://www.baiweigang.cn/blog/2013/08/17/01/"/>
+    <updated>2013-08-17T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2013/08/17/01</id>
+    <content type="html"><![CDATA[<h3>html-控件的隐藏</h3>
+
+<p>html属性设置 input的两种方式 type=&ldquo;hidden&rdquo; style=&ldquo;display: none;&rdquo;</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;input type="hidden" value="" name="Ie_txt" id="Ie_txt"&gt;  
+</span><span class='line'>&lt;input type="text" style="display: none;" value="275" name="task_id" class="span3"&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>通过js脚本设置</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;input type="button" value="隐藏" onclick="csan(did,'none')"&gt;
+</span><span class='line'>&lt;input type="button" value="显示" onclick="csan(did,'')"&gt;
+</span><span class='line'>&lt;input id="did"&gt;
+</span><span class='line'>&lt;br&gt;
+</span><span class='line'>&lt;input type="button" value="隐藏" onclick="csan(dis,'none')"&gt;
+</span><span class='line'>&lt;input type="button" value="显示" onclick="csan(dis,'')"&gt;
+</span><span class='line'>&lt;input id="dis"&gt;
+</span><span class='line'>&lt;script&gt;
+</span><span class='line'>function csan(obj,sta){
+</span><span class='line'>eval("obj.style.display=\""+sta+"\"");
+</span><span class='line'>}
+</span><span class='line'>&lt;/script&gt;</span></code></pre></td></tr></table></div></figure>
+
 ]]></content>
   </entry>
   

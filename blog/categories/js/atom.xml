@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Js | Bwgang的自用博客]]></title>
+  <link href="http://www.baiweigang.cn/blog/categories/js/atom.xml" rel="self"/>
+  <link href="http://www.baiweigang.cn/"/>
+  <updated>2014-09-23T22:16:30+08:00</updated>
+  <id>http://www.baiweigang.cn/</id>
+  <author>
+    <name><![CDATA[bwgang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Js返回上一页 并延迟几秒]]></title>
+    <link href="http://www.baiweigang.cn/blog/2013/08/18/01/"/>
+    <updated>2013-08-18T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2013/08/18/01</id>
+    <content type="html"><![CDATA[<p>js返回上一页 并延迟几秒</p>
+
+<p>结合Jquery的setTimeout函数使用
+<code>
+&lt;label&gt;{$err_msg}  --3秒后返回重新填写&lt;/label&gt;
+ &lt;script&gt;
+    setTimeout(function () {
+         javascript:history.go(-1);
+    }, 3000);
+&lt;/script&gt;
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Html-控件的隐藏]]></title>
+    <link href="http://www.baiweigang.cn/blog/2013/08/17/01/"/>
+    <updated>2013-08-17T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2013/08/17/01</id>
+    <content type="html"><![CDATA[<h3>html-控件的隐藏</h3>
+
+<p>html属性设置 input的两种方式 type=&ldquo;hidden&rdquo; style=&ldquo;display: none;&rdquo;
+<code>
+&lt;input type="hidden" value="" name="Ie_txt" id="Ie_txt"&gt;  
+&lt;input type="text" style="display: none;" value="275" name="task_id" class="span3"&gt;
+</code></p>
+
+<h3>通过js脚本设置</h3>
+
+<p>`&ldquo;
+<input type="button" value="隐藏" onclick="csan(did,'none')">
+&lt;input type=&ldquo;button&rdquo; value=&ldquo;显示&rdquo; onclick=&ldquo;csan(did,&rdquo;)&ldquo;>
+<input id="did">
+<br>
+<input type="button" value="隐藏" onclick="csan(dis,'none')">
+<input type="button" value="显示" onclick="csan(dis,'')">
+<input id="dis"></p>
+
+<script>
+function csan(obj,sta){
+eval("obj.style.display=\""+sta+"\"");
+}
+</script>
+
+
+<p>&#8220;`</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Eclipse | Bwgang的自用博客]]></title>
+  <link href="http://www.baiweigang.cn/blog/categories/eclipse/atom.xml" rel="self"/>
+  <link href="http://www.baiweigang.cn/"/>
+  <updated>2014-09-23T22:16:30+08:00</updated>
+  <id>http://www.baiweigang.cn/</id>
+  <author>
+    <name><![CDATA[bwgang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Eclipse运行的java设置代理]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/06/12/01/"/>
+    <updated>2014-06-12T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/06/12/01</id>
+    <content type="html"><![CDATA[<p>在vm参数中增加如下设置
+<code>
+-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=8888
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

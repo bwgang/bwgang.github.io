@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Adb | Bwgang的自用博客]]></title>
+  <link href="http://www.baiweigang.cn/blog/categories/adb/atom.xml" rel="self"/>
+  <link href="http://www.baiweigang.cn/"/>
+  <updated>2014-09-23T22:16:30+08:00</updated>
+  <id>http://www.baiweigang.cn/</id>
+  <author>
+    <name><![CDATA[bwgang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[安卓Android模拟器中如何写入hosts文件]]></title>
+    <link href="http://www.baiweigang.cn/blog/2013/10/18/01/"/>
+    <updated>2013-10-18T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2013/10/18/01</id>
+    <content type="html"><![CDATA[<p>安卓app测试中，需要修改host信息，指向测试环境，
+真机有限，有时需要用到安卓模拟器，默认安装的模拟器是没有root的，在系统中无法直接修改，
+如果root后再修改，操作步骤繁琐了些，可以不root，直接通过命令修改，如下：
+&#8220;`</p>
+
+<h1>设置目录权限</h1>
+
+<pre><code>adb shell chmod 4777 /system
+</code></pre>
+
+<h1>写入hosts文件</h1>
+
+<pre><code>echo "1.1.1.1 site.name.com" &gt; etc/hosts
+</code></pre>
+
+<h1>查看写入结果</h1>
+
+<pre><code>cat etc/hosts
+</code></pre>
+
+<p>&#8220;`</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Java | Bwgang的自用博客]]></title>
+  <link href="http://www.baiweigang.cn/blog/categories/java/atom.xml" rel="self"/>
+  <link href="http://www.baiweigang.cn/"/>
+  <updated>2014-09-23T22:16:30+08:00</updated>
+  <id>http://www.baiweigang.cn/</id>
+  <author>
+    <name><![CDATA[bwgang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[转：Java：判断文件的编码]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/06/26/01/"/>
+    <updated>2014-06-26T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/06/26/01</id>
+    <content type="html"><![CDATA[<p>转自：<a href="http://www.cppblog.com/biao/archive/2009/11/04/100130.aspx">http://www.cppblog.com/biao/archive/2009/11/04/100130.aspx</a>  <br/>
+首先，不同编码的文本，是根据文本的前两个字节来定义其编码格式的。定义如下：</p>
+
+<ul>
+<li>ANSI：　　　　　　　　无格式定义；</li>
+<li>Unicode： 　　　　　　前两个字节为FFFE；</li>
+<li>Unicode big endian：　前两字节为FEFF；　</li>
+<li>UTF-8：　 　　　　　　前两字节为EFBB；</li>
+</ul>
+
+
+<p>知道了各种编码格式的区别，写代码就容易了</p>
+
+<pre><code>public static String get_charset( File file ) {  
+        String charset = "GBK";  
+        byte[] first3Bytes = new byte[3];  
+        try {  
+            boolean;  
+            BufferedInputStream bis = new BufferedInputStream( new FileInputStream( file ) );  
+            bis.mark( 0 );  
+            int read = bis.read( first3Bytes, 0, 3 );  
+            if ( read == -1 ) return charset;  
+            if ( first3Bytes[0] == (byte) 0xFF &amp;&amp; first3Bytes[1] == (byte) 0xFE ) {  
+                charset = "UTF-16LE";  
+                checked = true;  
+            }  
+            else if ( first3Bytes[0] == (byte) 0xFE &amp;&amp; first3Bytes[1] == (byte) 0xFF ) {  
+                charset = "UTF-16BE";  
+                checked = true;  
+            }  
+            else if ( first3Bytes[0] == (byte) 0xEF &amp;&amp; first3Bytes[1] == (byte) 0xBB &amp;&amp; first3Bytes[2] == (byte) 0xBF ) {  
+                charset = "UTF-8";  
+                checked = true;  
+            }  
+            bis.reset();  
+            if ( !checked ) {  
+            //    int len = 0;  
+                int loc = 0;  
+
+                while ( (read = bis.read()) != -1 ) {  
+                    loc++;  
+                    if ( read &gt;= 0xF0 ) break;  
+                    if ( 0x80 &lt;= read &amp;&amp; read &lt;= 0xBF ) // 单独出现BF以下的，也算是GBK  
+                    break;  
+                    if ( 0xC0 &lt;= read &amp;&amp; read &lt;= 0xDF ) {  
+                        read = bis.read();  
+                        if ( 0x80 &lt;= read &amp;&amp; read &lt;= 0xBF ) // 双字节 (0xC0 - 0xDF) (0x80  
+                                                                        // - 0xBF),也可能在GB编码内  
+                        continue;  
+                        else break;  
+                    }  
+                    else if ( 0xE0 &lt;= read &amp;&amp; read &lt;= 0xEF ) {// 也有可能出错，但是几率较小  
+                        read = bis.read();  
+                        if ( 0x80 &lt;= read &amp;&amp; read &lt;= 0xBF ) {  
+                            read = bis.read();  
+                            if ( 0x80 &lt;= read &amp;&amp; read &lt;= 0xBF ) {  
+                                charset = "UTF-8";  
+                                break;  
+                            }  
+                            else break;  
+                        }  
+                        else break;  
+                    }  
+                }  
+                //System.out.println( loc + " " + Integer.toHexString( read ) );  
+            }  
+
+            bis.close();  
+        } catch ( Exception e ) {  
+            e.printStackTrace();  
+        }  
+
+        return charset;  
+    }   
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[转：将System.out输出到文件和控制台的简单方法]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/05/22/01/"/>
+    <updated>2014-05-22T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/05/22/01</id>
+    <content type="html"><![CDATA[<p>转自：<a href="http://www.carygao.info/archives/92">http://www.carygao.info/archives/92</a>
+原文：A quick and easy way to direct Java System.out to File and to Console</p>
+
+<p>如果你想将System.out和System.err的结果输出到文件和控制台中，请直接看下面代码示例。
+使用Google去搜索“Java stdout 输出到文件和控制台中”，这个问题答案简单到爆，但悲剧的是前几页几乎没答案。于是俺决定写一个简单的方法，希望码农们未来不要总花那么长时间来处理这些麻烦。</p>
+
+<p>那么如何不用极度荒唐的方法来实现将System.out或System.err同时输出到文件和控制台中呢？简单来说，只需要写一个继承自OutputStream的实现类然后用它构造一个PrintStream实例，最后调用System把PrintStream放进去。</p>
+
+<pre><code>public class MultiOutputStream extends OutputStream
+{
+    OutputStream[] outputStreams;
+
+    public MultiOutputStream(OutputStream... outputStreams)
+    {
+        this.outputStreams= outputStreams;
+    }
+
+    @Override
+    public void write(int b) throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.write(b);
+    }
+
+    @Override
+    public void write(byte[] b) throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.write(b);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.write(b, off, len);
+    }
+
+    @Override
+    public void flush() throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.flush();
+    }
+
+    @Override
+    public void close() throws IOException
+    {
+        for (OutputStream out: outputStreams)
+            out.close();
+    }
+}
+</code></pre>
+
+<p>下一步构造一个PrintStream实例放在System中：
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>try
+</span><span class='line'>{
+</span><span class='line'>    FileOutputStream fout= new FileOutputStream(&ldquo;stdout.log&rdquo;);
+</span><span class='line'>    FileOutputStream ferr= new FileOutputStream(&ldquo;stderr.log&rdquo;);&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;MultiOutputStream multiOut= new MultiOutputStream(System.out, fout);
+</span><span class='line'>MultiOutputStream multiErr= new MultiOutputStream(System.err, ferr);
+</span><span class='line'>
+</span><span class='line'>PrintStream stdout= new PrintStream(multiOut);
+</span><span class='line'>PrintStream stderr= new PrintStream(multiErr);
+</span><span class='line'>
+</span><span class='line'>System.setOut(stdout);
+</span><span class='line'>System.setErr(stderr);
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;}
+</span><span class='line'>catch (FileNotFoundException ex)
+</span><span class='line'>{
+</span><span class='line'>    //Could not create/open the file
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></p>
+
+<p>现在你在任意地方使用System.out或System.err，最后去文件和控制台中查看输出结果。
+<code>
+System.out.println("Holy Rusty Metal Batman! I can't believe this was so simple!");
+System.err.println("God I hate you Robin.");
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[转:HttpClient Cookies]]></title>
+    <link href="http://www.baiweigang.cn/blog/2014/05/13/01/"/>
+    <updated>2014-05-13T20:20:21+08:00</updated>
+    <id>http://www.baiweigang.cn/blog/2014/05/13/01</id>
+    <content type="html"><![CDATA[<p>转自：<a href="http://blog.csdn.net/mgoann/article/details/4057064">http://blog.csdn.net/mgoann/article/details/4057064</a></p>
+
+<h3>HttpClient Cookies</h3>
+
+<h2>简介</h2>
+
+<p>HttpClient支持自动管理Cookies，允许服务端设定Cookies，并在请求时自动返回客户端的Cookies信息。客户端也可以手动的设置Cookies发送到服务端。</p>
+
+<p>不幸的是，同一时间内有太多的Cookies标准： Netscape Cookie, RFC2109, RFC2965 以及大量供应商不符合规范的自定义Cookies标准。针对此，HttpClient提供Cookies管理策略驱动。这片文章意在阐述怎么样去使用不同标准的Cookies以及如何解决在使用Cookies和HttpClient时一些共同的问题。</p>
+
+<h2>支持的规格</h2>
+
+<p>以下Cookies标准，HttpClient3.1可以支持。</p>
+
+<h3>RFC2109</h3>
+
+<p>RFC2109是W3C组织第一次推出的官方Cookies标准。理论上，所有使用版本1Cookies的服务端都应该使用此标准。HttpClient已经将此标准设定为默认。
+遗憾的是，许多服务端不正确的实现了标准或者仍然使用Netscape标准。所有有时感到此标准太多于严格。
+RFC2109是HttpClient使用的默认Cookies协议。</p>
+
+<h3>RFC2965</h3>
+
+<p>RFC2965定义了版本2并且尝试去弥补在版本1中Cookie的RFC2109标准的缺点。RFC2965是，并规定RFC2965最终取代RFC2109.</p>
+
+<p>发送RFC2965标准Cookies的服务端，将会使用Set-Cookie2 header添加到Set-Cookie Header信心中，RFC2965 Cookies是区分端口的。</p>
+
+<h3>Netscape标准</h3>
+
+<p>Netscape是最原始的Cookies规范，同时也是RFC2109的基础。尽管如此，还是在很多重要的方面与RFC2109不同，可能需要特定服务器才可以兼容。</p>
+
+<h3>Browser Compatibility</h3>
+
+<p>这种兼容性设计要求是适应尽可能多的不同的服务器，尽管不是完全按照标准来实现的。如果你遇到了解析Cookies的问题，你就可能要用到这一个规范。</p>
+
+<p>有太多的web站点是用CGI脚本去实现的，而导致只有将所有的Cookies都放入Request header才可以正常的工作。这种情况下最好设置http.protocol.single-cookie-header参数为true。</p>
+
+<h3>Ignore Cookies</h3>
+
+<p>此规格忽略所有Cookie 。被用来防止HttpClient接受和发送的Cookie。</p>
+
+<h3>Spacifying the Specification</h3>
+
+<p>有两种方式去规定使用哪种Cookies规范，每个HttpMethod实例都有HttpMethodParams，他的policy值必须使用方法CookiePolicy.registerCookieSpec()来注册。
+<code>
+HttpMethod method = new GetMethod();
+Method.getParams().setCookiePolicy(CookiePolicy.RFC_2109);
+</code></p>
+
+<h3>手动处理Cookies</h3>
+
+<p>HttpClient的Cookie管理API可以手动处理Cookie。可以手动设置Requset的Cookie headers或是处理Response的Set-Cookie的headers或是用自动Cookie管理去代替。
+<code>
+HttpMethod method = new GetMethod();
+Method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+Method.setRequestHeader(“Cookie”, “special_cookie=value”);
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>
