@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://bwgang.github.io/sitemap.xml 
+Sitemap: http://www.baiweigang.cn/sitemap.xml 
