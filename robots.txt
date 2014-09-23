@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: 
-
-Sitemap: http://bwgang.github.io/sitemap.xml 
