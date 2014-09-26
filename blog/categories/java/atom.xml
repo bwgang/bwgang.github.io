@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Java | Bwgang的自用博客]]></title>
+  <title><![CDATA[Category: Java | Bwgang的记录##]]></title>
   <link href="http://www.baiweigang.cn/blog/categories/java/atom.xml" rel="self"/>
   <link href="http://www.baiweigang.cn/"/>
-  <updated>2014-09-23T22:16:30+08:00</updated>
+  <updated>2014-09-26T16:50:31+08:00</updated>
   <id>http://www.baiweigang.cn/</id>
   <author>
     <name><![CDATA[bwgang]]></name>
